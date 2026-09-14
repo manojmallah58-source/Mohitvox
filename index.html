@@ -294,7 +294,7 @@
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
   <script>
-    const CONFIG = { key: "mohitvox_access_v1", timeKey: "mohitvox_time_v1", preview: 15000, expiry: 86400000 };
+    const CONFIG = { key: "mohitvox_access_v42", timeKey: "mohitvox_time_v42", preview: 15000, expiry: 86400000 };
     const JSON_URL = "https://raw.githubusercontent.com/manojmallah58-source/Cricket-yoddha-json/main/links.json";
     const TELEGRAM_LINK = "https://t.me/addlist/ZVgzdiBtVBwzM2M1";
 
@@ -386,24 +386,18 @@
         }, 3000);
     });
 
-    // Modified & Unique Firebase Live Counter Setup for Mohitvox
+    // Modified Firebase Live Counter Setup
     const firebaseConfig = { apiKey: "AIzaSyA-vR50CMDYJVHApJir-6fmgRqhFiqQDU8", authDomain: "my-website-cricket.firebaseapp.com", databaseURL: "https://my-website-cricket-default-rtdb.firebaseio.com", projectId: "my-website-cricket" };
     if(!firebase.apps.length) firebase.initializeApp(firebaseConfig);
     
     const db = firebase.database();
     const today = new Date().toISOString().slice(0, 10);
     const params = new URLSearchParams(window.location.search);
-    const currentId = params.get("id") || "default_stream";
+    const currentId = params.get("id") || "stream_node";
     const dbRefName = "mohitvox_analytics_node_" + currentId;
     
     const ref = db.ref('stats_counters/' + dbRefName + '/' + today);
-    
-    // Custom unique increment/transaction with a baseline offset to keep it different
-    ref.transaction(v => {
-      let currentVal = v || Math.floor(Math.random() * 120) + 340;
-      return currentVal + 1;
-    });
-
+    ref.transaction(v => (v || 0) + 1);
     ref.on('value', snap => { 
       document.getElementById('live-count').innerText = "TODAY'S WATCHING - " + (snap.val() || 0).toLocaleString(); 
     });
